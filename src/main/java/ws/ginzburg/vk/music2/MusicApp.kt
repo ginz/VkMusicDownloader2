@@ -2,6 +2,7 @@ package ws.ginzburg.vk.music2
 
 import javafx.application.Application
 import javafx.scene.Scene
+import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
@@ -30,6 +31,16 @@ class MusicApp : Application() {
         }
         downloadButton.setOnAction {
             val audios = AudioList(vkView.engine.document)
+
+            if (audios.isEmpty()) {
+                val alert = Alert(Alert.AlertType.WARNING)
+                alert.title = "Nothing to download"
+                alert.headerText = "No audio elements found on the current page"
+                alert.contentText = "You are expected to proceed to a page with audio elements, such as your music page or your feed"
+                alert.showAndWait()
+
+                return@setOnAction
+            }
 
             val popupStage = Stage()
             popupStage.scene = Scene(DownloadPane(audios))
