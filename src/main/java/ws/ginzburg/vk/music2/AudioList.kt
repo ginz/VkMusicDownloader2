@@ -11,22 +11,27 @@ import javax.xml.xpath.XPathFactory
  */
 class AudioList(document:Document) : ArrayList<Audio>() {
     init {
-        val xPath = XPathFactory.newInstance().newXPath()
-        val infoPath = xPath.compile("//*[@class=\"ai_info\"]")
-        val artistPath = xPath.compile(".//*[@class=\"ai_artist\"]")
-        val titlePath = xPath.compile(".//*[@class=\"ai_title\"]")
-        val urlPath = xPath.compile(".//*[@class=\"ai_body\"]/*[@type=\"hidden\"]")
-        val nodeList:NodeList = infoPath.evaluate(document, XPathConstants.NODESET) as NodeList
+        findAudios(document)
+    }
 
-        for (i in 0 until nodeList.length) {
-            val node = nodeList.item(i)
-
-            val audio = Audio(
-                    (urlPath.evaluate(node, XPathConstants.NODE) as Node).attributes.getNamedItem("value").nodeValue,
-                    (artistPath.evaluate(node, XPathConstants.NODE) as Node).firstChild.nodeValue,
-                    (titlePath.evaluate(node, XPathConstants.NODE) as Node).firstChild.nodeValue
-            )
-            add(audio)
+    fun findAudios(node: Node) {
+        if (node.nodeName == "DIV" && node.attributes.getNamedItem("class")?.textContent == "ai_info") {
+            processAudioNode(node)
+            return
         }
+        val childNodes = node.childNodes
+        for (i in 0 until childNodes.length) {
+            findAudios(childNodes.item(i))
+        }
+    }
+
+    fun processAudioNode(node: Node) {
+        // hardcode paths to work faster
+        val bodyNode = node.lastChild
+        val url = bodyNode.lastChild.attributes.getNamedItem("value").textContent
+        val labelNode = bodyNode.lastChild.previousSibling
+        val artist = labelNode.firstChild.firstChild.textContent
+        val title = labelNode.lastChild.firstChild.textContent
+        add(Audio(url, artist, title))
     }
 }
