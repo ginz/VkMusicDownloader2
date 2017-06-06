@@ -12,3 +12,6 @@ To run the UI install [Apache Maven](https://maven.apache.org/) and run the comm
 ## Security considerations
 
 Unfortunately, there's no way I can prove the application is not using (stealing) your authentication data, so the only way to check it is to read the source code
+
+### Build status
+[![Build Status](https://travis-ci.org/ginz/VkMusicDownloader2.png)](https://travis-ci.org/ginz/VkMusicDownloader2)
