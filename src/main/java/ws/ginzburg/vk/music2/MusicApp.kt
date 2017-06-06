@@ -9,7 +9,7 @@ import javafx.scene.layout.VBox
 import javafx.scene.web.WebEngine
 import javafx.scene.web.WebView
 import javafx.stage.Stage
-import ws.ginzburg.tools.PersistentOneCookieStore
+import ws.ginzburg.tools.PersistentCookieStore
 import java.net.CookieManager
 import java.net.CookiePolicy
 
@@ -22,10 +22,10 @@ class MusicApp : Application() {
         val scrollButton = Button("Scroll to the bottom")
         val vkView = WebView()
 
-        /*CookieManager.setDefault(CookieManager(
-                PersistentOneCookieStore(),
-                CookiePolicy.ACCEPT_ALL))*/
-        vkView.engine.load("https://m.vk.com")
+        CookieManager.setDefault(CookieManager(
+                PersistentCookieStore(),
+                CookiePolicy.ACCEPT_ALL))
+        vkView.engine.load("https://m.vk.com/audio")
         scrollButton.setOnAction {
             scrollToBottom(vkView.engine)
         }
