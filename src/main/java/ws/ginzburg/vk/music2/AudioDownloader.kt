@@ -4,17 +4,12 @@ import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
 import java.nio.channels.Channels
-import java.util.function.IntConsumer
 
 /**
  * Created by Ginzburg on 04/06/2017.
  */
-class AudioDownloader(audios: List<Audio>, directory: File, progressReporter: (Int) -> Unit, finishReporter: () -> Unit) {
+class AudioDownloader(val audios: List<Audio>, val directory: File, val progressReporter: (Int) -> Unit, val finishReporter: () -> Unit) {
     private @Volatile var isCanceled = false
-    private val audios = audios
-    private val directory = directory
-    private val progressReporter = progressReporter
-    private val finishReporter = finishReporter
 
     fun start() {
         Thread({
