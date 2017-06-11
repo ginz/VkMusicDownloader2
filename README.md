@@ -7,7 +7,7 @@ December 16-th, 2016 the Public API for audio was disabled, so downloading music
 
 To run the UI install [Apache Maven](https://maven.apache.org/) and run the command below:
 
-    $ maven clean package exec:java
+    $ mvn clean package exec:java
 
 ## Security considerations
 
