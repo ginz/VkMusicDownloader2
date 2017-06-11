@@ -20,8 +20,8 @@ class MusicApp : Application() {
     override fun start(stage: Stage) {
         val downloadButton = Button("Download")
         val scrollButton = Button("Scroll to the bottom")
+        val refreshButton = Button("Refresh")
         val vkView = WebView()
-
         CookieManager.setDefault(CookieManager(
                 PersistentCookieStore(),
                 CookiePolicy.ACCEPT_ALL))
@@ -47,11 +47,14 @@ class MusicApp : Application() {
 
             popupStage.showAndWait()
         }
+        refreshButton.setOnAction {
+            vkView.engine.reload()
+        }
 
         val content = VBox()
         val toolBox = HBox()
 
-        toolBox.children.addAll(downloadButton, scrollButton)
+        toolBox.children.addAll(downloadButton, scrollButton, refreshButton)
         content.children.addAll(toolBox, vkView)
 
         stage.scene = Scene(content)
