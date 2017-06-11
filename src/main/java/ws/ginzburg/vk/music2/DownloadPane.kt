@@ -40,6 +40,7 @@ class DownloadPane(audios: List<Audio>) : StackPane() {
         val selectButton = Button("Select all")
         val deselectButton = Button("Deselect all")
         val downloadButton = Button("Download")
+        val overwriteCheckbox = CheckBox("Overwrite existing")
 
         val toolBox = HBox()
         toolBox.children.addAll(selectButton, deselectButton, downloadButton)
@@ -71,7 +72,7 @@ class DownloadPane(audios: List<Audio>) : StackPane() {
         }
 
         val content = VBox()
-        content.children.addAll(foundLabel, directoryLine, toolBox, audiosScrollPane)
+        content.children.addAll(foundLabel, directoryLine, toolBox, overwriteCheckbox, audiosScrollPane)
 
         downloadButton.setOnAction {
             val selectedAudios = ArrayList<Audio>()
@@ -105,7 +106,7 @@ class DownloadPane(audios: List<Audio>) : StackPane() {
             progressStage.initOwner(scene.window)
             progressStage.show()
             content.isDisable = true
-            val audioDownloader = AudioDownloader(selectedAudios, File(directoryInput.text), { i ->
+            val audioDownloader = AudioDownloader(selectedAudios, File(directoryInput.text), overwriteCheckbox.isSelected, { i ->
                 progressIndicator.progress = i * 1.0 / selectedAudios.size
             }, {
                 Platform.runLater({

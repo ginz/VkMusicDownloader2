@@ -9,7 +9,7 @@ import java.nio.channels.Channels
 /**
  * Created by Ginzburg on 04/06/2017.
  */
-class AudioDownloader(val audios: List<Audio>, val directory: File, val progressReporter: (Int) -> Unit, val finishReporter: () -> Unit, val failReporter: (Audio, Throwable) -> ErrorResponse) {
+class AudioDownloader(val audios: List<Audio>, val directory: File, val overwriteExisting: Boolean, val progressReporter: (Int) -> Unit, val finishReporter: () -> Unit, val failReporter: (Audio, Throwable) -> ErrorResponse) {
     private @Volatile var isCanceled = false
 
     fun start() {
@@ -21,15 +21,17 @@ class AudioDownloader(val audios: List<Audio>, val directory: File, val progress
                     try {
                         val fileName = normalizeFileName(audio.artist + " - " + audio.title) + ".mp3"
                         val file = File(directory, fileName)
-                        val audioURL = URL(audio.url)
-                        val channel = Channels.newChannel(audioURL.openStream())
-                        val outputStream = FileOutputStream(file)
+                        if (overwriteExisting || !file.exists()) {
+                            val audioURL = URL(audio.url)
+                            val channel = Channels.newChannel(audioURL.openStream())
+                            val outputStream = FileOutputStream(file)
 
-                        val debugThrowException = false
-                        if (debugThrowException) throw IOException("Debug exception")
+                            val debugThrowException = false
+                            if (debugThrowException) throw IOException("Debug exception")
 
-                        outputStream.channel.transferFrom(channel, 0, Long.MAX_VALUE)
-                        outputStream.close()
+                            outputStream.channel.transferFrom(channel, 0, Long.MAX_VALUE)
+                            outputStream.close()
+                        }
                         stepFinished = true
                     } catch (e: Throwable) {
                         val action = failReporter(audio, e)
