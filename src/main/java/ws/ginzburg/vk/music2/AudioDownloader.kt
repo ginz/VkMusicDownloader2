@@ -2,25 +2,51 @@ package ws.ginzburg.vk.music2
 
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.net.URL
 import java.nio.channels.Channels
 
 /**
  * Created by Ginzburg on 04/06/2017.
  */
-class AudioDownloader(val audios: List<Audio>, val directory: File, val progressReporter: (Int) -> Unit, val finishReporter: () -> Unit) {
+class AudioDownloader(val audios: List<Audio>, val directory: File, val progressReporter: (Int) -> Unit, val finishReporter: () -> Unit, val failReporter: (Audio, Throwable) -> ErrorResponse) {
     private @Volatile var isCanceled = false
 
     fun start() {
         Thread({
             for ((i, audio) in audios.withIndex()) {
-                if (isCanceled) break
-                val fileName = normalizeFileName(audio.artist + " - " + audio.title) + ".mp3"
-                val file = File(directory, fileName)
-                val audioURL = URL(audio.url)
-                val channel = Channels.newChannel(audioURL.openStream()) // process exceptions!
-                val outputStream = FileOutputStream(file)
-                outputStream.channel.transferFrom(channel, 0, Long.MAX_VALUE)
+                var stepFinished = false
+                while (!stepFinished) {
+                    if (isCanceled) break
+                    try {
+                        val fileName = normalizeFileName(audio.artist + " - " + audio.title) + ".mp3"
+                        val file = File(directory, fileName)
+                        val audioURL = URL(audio.url)
+                        val channel = Channels.newChannel(audioURL.openStream())
+                        val outputStream = FileOutputStream(file)
+
+                        val debugThrowException = false
+                        if (debugThrowException) throw IOException("Debug exception")
+
+                        outputStream.channel.transferFrom(channel, 0, Long.MAX_VALUE)
+                        outputStream.close()
+                        stepFinished = true
+                    } catch (e: Throwable) {
+                        val action = failReporter(audio, e)
+                        when (action) {
+                            ErrorResponse.CANCEL -> {
+                                cancel()
+                                stepFinished = true
+                            }
+                            ErrorResponse.RETRY -> {
+                                stepFinished = false
+                            }
+                            ErrorResponse.SKIP -> {
+                                stepFinished = true
+                            }
+                        }
+                    }
+                }
                 progressReporter(i + 1)
             }
             finishReporter()
@@ -39,4 +65,6 @@ class AudioDownloader(val audios: List<Audio>, val directory: File, val progress
                     return fileName
         return shortened.replace(Regex("[^\\pL0-9.-]"), "_")
     }
+
+
 }
