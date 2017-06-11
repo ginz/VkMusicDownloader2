@@ -62,7 +62,7 @@ class AudioDownloader(val audios: List<Audio>, val directory: File, val progress
                 if (fileName.length > 100)
                     fileName.substring(0, 97) + "..."
                 else
-                    return fileName
+                    fileName
         return shortened.replace(Regex("[^\\pL0-9.-]"), "_")
     }
 
