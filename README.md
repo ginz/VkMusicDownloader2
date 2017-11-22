@@ -8,6 +8,8 @@ December 16-th, 2016 the Public API for audio was disabled, so downloading music
 To run the UI install [Gradle](https://gradle.org/install/) and run the command below:
 
     $ gradle run
+    
+Alternatively, you can download the [latest version](https://downloads.ginzburg.ws/VkMusicDownloader2.zip), unpack it and run `VkMusicDownloader2/bin/VkMusicDownloader.bat` for Windows users or `VkMusicDownloader2/bin/VkMusicDownloader` for Linux users.
 
 ## Security considerations
 
