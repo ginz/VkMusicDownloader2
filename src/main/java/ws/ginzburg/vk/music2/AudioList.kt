@@ -11,7 +11,7 @@ import javax.xml.xpath.XPathFactory
 /**
  * Created by Ginzburg on 01/06/2017.
  */
-class AudioList(document:Document) : ArrayList<Audio>() {
+class AudioList(val vkId: Int, document:Document) : ArrayList<Audio>() {
     private val VK_STR:String = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN0PQRSTUVWXYZO123456789+/="
     private val VK_STR2:String
 
@@ -61,6 +61,7 @@ class AudioList(document:Document) : ArrayList<Audio>() {
             else if (cmd == "r") tStr = vkR(tStr, args[0].toInt())
             else if (cmd == "x") tStr = vkXor(tStr, args[0])
             else if (cmd == "s") tStr = vkS(tStr, args[0].toInt())
+            else if (cmd == "i") tStr = vkI(tStr, args[0].toInt())
             else throw ParseException("unknown command $cmd, please file bug report", 0)
         }
 
@@ -152,5 +153,9 @@ class AudioList(document:Document) : ArrayList<Audio>() {
         }
 
         return tChars.joinToString("")
+    }
+
+    fun vkI(t: String, e: Int):String {
+        return vkS(t, e xor vkId)
     }
 }

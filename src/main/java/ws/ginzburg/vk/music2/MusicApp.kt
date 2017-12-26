@@ -36,7 +36,15 @@ class MusicApp : Application() {
             scrollToBottom(vkView.engine)
         }
         downloadButton.setOnAction {
-            val audios = AudioList(vkView.engine.document)
+            val vkId = vkView.engine.executeScript("vk.id")
+            if (vkId == null || vkId !is Int) {
+                var alert = Alert(Alert.AlertType.WARNING)
+                alert.title = "VK User not found"
+                alert.contentText = "Please open an issue at project's GitHub page"
+                alert.showAndWait()
+                return@setOnAction
+            }
+            val audios = AudioList(vkId, vkView.engine.document)
 
             if (audios.isEmpty()) {
                 val alert = Alert(Alert.AlertType.WARNING)
