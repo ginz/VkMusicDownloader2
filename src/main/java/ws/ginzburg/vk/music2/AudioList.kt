@@ -133,8 +133,8 @@ class AudioList(val vkId: Int, document:Document) : ArrayList<Audio>() {
         val o = mutableListOf<Int>()
 
         for (a in (0 until i).reversed()) {
-            e = Math.abs(e) + a + i
-            o += (e % i) or 0
+            e = (i * (a + 1) xor e + a) % i
+            o += e
         }
 
         return o.reversed()
